@@ -1,6 +1,6 @@
 <?php
 
-namespace OAuth;
+namespace Maxwell\OAuthClient\OAuth;
 
 /**
  * A class for implementing a Signature Method

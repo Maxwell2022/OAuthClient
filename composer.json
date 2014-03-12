@@ -1,12 +1,19 @@
 {
-    "name": "maxwell2022/oauthclient",
+    "name": "maxwell2022/oauth-client",
     "homepage": "https://github.com/Maxwell2022/OAuthClient",
+    "keywords": ["oauth"],
+    "license": "MIT",
+    "authors": [{
+        "name" : "Maxime Aoustin",
+        "homepage": "https://github.com/Maxwell2022"
+    }],
     "require": {
         "php": ">=5.3.0"
     },
     "autoload": {
         "psr-0": {
-            "OAuthClient": "classes/"
+            "Maxwell\\OAuthClient": ""
         }
-    }
+    },
+    "target-dir": "Maxwell/OAuthClient"
 }

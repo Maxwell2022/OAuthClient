@@ -1,6 +1,6 @@
 <?php
 
-namespace OAuth;
+namespace Maxwell\OAuthClient\OAuth;
 
 /**
  * SPL class loader for OAuthClient classes.
