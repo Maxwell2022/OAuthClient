@@ -282,13 +282,13 @@ abstract class AbstractOAuthClient
     public abstract function getAccessToken($code, $redirectURI=null);
 
     /**
-     * Post a job on Social network
+     * Publish a content on Social network
      *
      * @param $data
      * @return bool|void
      * @throws \Exception
      */
-    public abstract function postJob($data);
+    public abstract function publish($data);
 
     public abstract function request($uri, $method='GET', $parameters=array());
 
