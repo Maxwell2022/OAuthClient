@@ -73,6 +73,11 @@ abstract class AbstractOAuthClient
     protected $sha1_method;
 
     /**
+     * @var array list of request headers
+     */
+    protected $http_request_headers;
+
+    /**
      * @var array list of headers
      */
     protected $http_header;
@@ -295,30 +300,33 @@ abstract class AbstractOAuthClient
      */
     public abstract function publish($data);
 
-    public abstract function request($uri, $method='GET', $parameters=array());
+    public abstract function request($uri, $method='GET', $parameters=array(), $headers=array(), $rawencoding=null);
 
     /**
      * Perform a GET request
      *
-     * @param $uri
+     * @param string $uri
      * @param array $parameters
+     * @param array $headers
      * @return mixed
      */
-    public function get($uri, $parameters=array())
+    public function get($uri, $parameters=array(), $headers=array())
     {
-        return $this->request($uri, 'GET', $parameters);
+        return $this->request($uri, 'GET', $parameters, $headers);
     }
 
     /**
      * Perform a POST request
      *
-     * @param $uri
+     * @param string $uri
      * @param array $parameters
+     * @param array $headers
+     * @param null $rawencoding
      * @return mixed
      */
-    public function post($uri, $parameters=array())
+    public function post($uri, $parameters=array(), $headers=array(), $rawencoding=null)
     {
-        return $this->request($uri, 'POST', $parameters);
+        return $this->request($uri, 'POST', $parameters, $headers, $rawencoding);
     }
 
     /**
@@ -326,18 +334,20 @@ abstract class AbstractOAuthClient
      *
      * @param $uri
      * @param array $parameters
+     * @param array $headers
+     * @param null $rawencoding
      * @return mixed
      */
-    public function delete($uri, $parameters=array())
+    public function delete($uri, $parameters=array(), $headers=array(), $rawencoding=null)
     {
-        return $this->request($uri, 'DELETE', $parameters);
+        return $this->request($uri, 'DELETE', $parameters, $headers, $rawencoding);
     }
 
     /**
      * @param null $uri
      * @return string
      */
-    protected function getRedirectUri($uri = null)
+    protected function getRedirectUri($uri=null)
     {
         $redirectURI = $this->redirectURI;
 
@@ -388,7 +398,7 @@ abstract class AbstractOAuthClient
      * @param null $postfields
      * @return mixed
      */
-    function http($url, $method, $postfields = null)
+    function http($url, $method, $postfields=null, $headers=array())
     {
         $this->http_info = array();
         $ci = curl_init();
@@ -397,7 +407,13 @@ abstract class AbstractOAuthClient
         curl_setopt($ci, CURLOPT_CONNECTTIMEOUT, self::CONNECT_TIMEOUT);
         curl_setopt($ci, CURLOPT_TIMEOUT, self::REQUEST_TIMEOUT);
         curl_setopt($ci, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ci, CURLOPT_HTTPHEADER, array('Expect:'));
+
+        // Set request headers if any
+        if (is_array($headers) && !empty($headers)){
+            $this->http_request_headers = $headers;
+            curl_setopt($ci, CURLOPT_HTTPHEADER, $headers);
+        }
+
         curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, self::SSL_VERIFY_PEER);
         curl_setopt($ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader'));
         curl_setopt($ci, CURLOPT_HEADER, false);
@@ -487,9 +503,24 @@ abstract class AbstractOAuthClient
     {
         return array(
             'http_url' => $this->http_url,
+            'http_request_headers' => $this->http_request_headers,
             'http_code' => $this->http_code,
             'http_info' => $this->http_info,
+            'http_header' => $this->http_header,
             'http_post' => $this->http_post,
         );
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getContentTypeFormat()
+    {
+        switch(self::DEFAULT_FORMAT) {
+            case 'json': return 'application/json';
+            case 'xml': return 'application/xml';
+        }
+
+        return 'application/json';
     }
 }
