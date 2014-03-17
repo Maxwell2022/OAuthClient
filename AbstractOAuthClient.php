@@ -93,6 +93,11 @@ abstract class AbstractOAuthClient
     protected $http_url;
 
     /**
+     * @var post variables
+     */
+    protected $http_post;
+
+    /**
      * @param $consumer_key
      * @param $consumer_secret
      * @param $redirectURI
@@ -397,10 +402,16 @@ abstract class AbstractOAuthClient
         curl_setopt($ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader'));
         curl_setopt($ci, CURLOPT_HEADER, false);
 
+        // Make sure the post fields are string
+        if (is_array($postfields) && !empty($postfields)) {
+            $postfields = http_build_query($postfields);
+        }
+
         switch ($method) {
             case 'POST':
                 curl_setopt($ci, CURLOPT_POST, true);
                 if (!empty($postfields)) {
+                    $this->http_post = $postfields;
                     curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields);
                 }
                 break;
@@ -478,6 +489,7 @@ abstract class AbstractOAuthClient
             'http_url' => $this->http_url,
             'http_code' => $this->http_code,
             'http_info' => $this->http_info,
+            'http_post' => $this->http_post,
         );
     }
 }
