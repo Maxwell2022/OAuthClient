@@ -101,9 +101,9 @@ abstract class AbstractOAuthClient
      */
     function __construct($consumer_key, $consumer_secret, $redirectURI, $oauth_token = null, $oauth_token_secret = null)
     {
-        $this->clientId = $consumer_key;
-        $this->clientSecret = $consumer_secret;
-        $this->redirectURI = $redirectURI;
+        $this->setConsumerKey($consumer_key);
+        $this->setConsumerSecret($consumer_secret);
+        $this->setRedirectURI($redirectURI);
 
         $this->consumer = new OAuth\Consumer($consumer_key, $consumer_secret, $redirectURI);
         $this->sha1_method = new OAuth\SignatureMethodHMAC();
